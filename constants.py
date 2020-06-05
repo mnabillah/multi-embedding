@@ -1,0 +1,6 @@
+# Learning constants
+LEARNING_RATE = 0.05
+EPOCH = 3
+SEED = 69
+WINDOW_SIZE = 3
+EMBEDDING_SIZE = 100
