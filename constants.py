@@ -1,6 +1,7 @@
 # Learning constants
 LEARNING_RATE = 0.05
-EPOCH = 3
+EPOCH = 35
 SEED = 69
-WINDOW_SIZE = 3
-EMBEDDING_SIZE = 100
+WINDOW_SIZE = 5
+EMBEDDING_SIZE = 300
+MODELS = ['all', 'word2vec', 'fasttext', 'glove', 'bert', 'elmo']

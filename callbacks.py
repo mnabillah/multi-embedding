@@ -4,24 +4,25 @@ from gensim.models.callbacks import CallbackAny2Vec
 
 
 class CalculateLoss(CallbackAny2Vec):
-    """Save model after several epochs."""
 
-    def __init__(self, path_prefix, save_every):
-        self.path_prefix = path_prefix
+    def __init__(self, prefix, save_every):
+        self.prefix = prefix
         self.save_every = save_every
-        self.epoch = 0
+        self.epoch = 1
         self.previous_loss = 0
 
     def on_epoch_end(self, model):
-        # Get loss difference
+        # Hitung selisih epoch
         current_loss = model.get_latest_training_loss() - self.previous_loss
-        print("Epoch: #{} - Loss: {}/{}/{}".format(self.epoch, current_loss, model.get_latest_training_loss(), self.previous_loss))
-        # Update 'previous loss'
-        self.previous_loss = current_loss
+        print("Epoch: #{} - Loss: {}/{}/{}".format(self.epoch, current_loss, model.get_latest_training_loss(),
+                                                   self.previous_loss))
+        self.previous_loss = model.get_latest_training_loss()
 
-        # Save model every set epoch
+        # Simpan model setiap sekian epoch
         if self.epoch % self.save_every == 0:
-            output_path = os.getcwd() + '\\saved_models\\{}_epoch{}.model'.format(self.path_prefix, self.epoch)
+            output_path = os.getcwd() + \
+                '\\trained_models\\{}_epoch{}.model'.format(
+                    self.prefix, self.epoch)
             model.save(output_path)
-        # Iterate epoch counter
+        # Iterasi counter
         self.epoch += 1
