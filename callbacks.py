@@ -18,10 +18,10 @@ class CalculateLoss(CallbackAny2Vec):
                                                    self.previous_loss))
         self.previous_loss = model.get_latest_training_loss()
 
-        # Simpan model setiap sekian epoch
+        # Simpan model_arg setiap sekian epoch
         if self.epoch % self.save_every == 0:
             output_path = os.getcwd() + \
-                '\\trained_models\\{}_epoch{}.model'.format(
+                '\\trained_models\\{}_epoch{}.model_arg'.format(
                     self.prefix, self.epoch)
             model.save(output_path)
         # Iterasi counter

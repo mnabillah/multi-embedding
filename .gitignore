@@ -1,7 +1,8 @@
-/trained_models/*
-/corpus/IDENTIC/*
-/corpus/idwiki/*
-/logs/*
-/.idea
-/.glove/*
-/.bert/*
+trained_models/
+corpus/
+logs/
+.idea/
+.glove/
+.bert/
+__pycache__/
+venv/
