@@ -1,8 +1,7 @@
+__pycache__/
+.idea/
 trained_models/
 corpus/
 logs/
-.idea/
-.glove/
 .bert/
-__pycache__/
 venv/

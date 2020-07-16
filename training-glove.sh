@@ -8,7 +8,7 @@ MAX_ITER=5
 WINDOW_SIZE=5
 
 # GloVe parameters
-GLOVE_DIR=.glove
+GLOVE_DIR=GloVe
 BUILD_DIR=$GLOVE_DIR/build
 VOCAB_FILE=$GLOVE_DIR/vocab.txt
 COOCCURRENCE_FILE=$GLOVE_DIR/cooccurrence.bin
@@ -20,6 +20,11 @@ VOCAB_MIN_COUNT=5
 BINARY=2
 NUM_THREADS=8
 X_MAX=10
+
+if [ ! -d ./GloVe/ ]; then
+  git clone https://github.com/stanfordnlp/GloVe.git && cd GloVe && make
+  cd ..
+fi
 
 # Start GloVe training
 $BUILD_DIR/vocab_count -min-count $VOCAB_MIN_COUNT -verbose $VERBOSE < $CORPUS > $VOCAB_FILE
@@ -35,3 +40,5 @@ then
     fi
   fi
 fi
+
+rmdir GloVe -r -fo
