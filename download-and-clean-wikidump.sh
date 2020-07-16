@@ -8,7 +8,6 @@ WIKI_DUMP_DOWNLOAD_URL=https://dumps.wikimedia.org/idwiki/latest/$WIKI_DUMP_NAME
 # create directory to save wikidump file (if not exist yet)
 if [ ! -d ./corpus/idwiki ]; then
   mkdir -p corpus/idwiki
-  cd corpus/idwiki
 fi
 WIKI_DUMP_NAME=./corpus/idwiki/$WIKI_DUMP_NAME
 
