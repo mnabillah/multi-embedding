@@ -5,3 +5,9 @@ corpus/
 logs/
 .bert/
 venv/
+GloVe/
+venv-wsl/
+results/
+figures/
+.vs/
+.vscode/

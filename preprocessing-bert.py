@@ -27,14 +27,13 @@ def parse_sentencepiece_token(token):
 
 
 if __name__ == "__main__":
-    # Configure logging
-    program = os.path.basename(sys.argv[0])
-    logger = logging.getLogger(program)
+    logger = logging.getLogger()
     logging.basicConfig(
-        filename="logs\\{}-{}.log".format(program.replace('.py', ''), datetime.now().strftime('%Y-%d-%m')),
+        filename="logs\\preprocessing-idwiki-bert-{}.log".format(datetime.now().strftime('%Y%d%m%H%M%S')),
         filemode='w',
         format="%(asctime)s:\t[%(levelname)s]\t%(message)s",
         datefmt='%d-%b-%y %H:%M:%S')
+    logger.addHandler(logging.StreamHandler())
 
     logging.root.setLevel(level=logging.INFO)
     logger.info("running %s" % ' '.join(sys.argv))
