@@ -77,7 +77,7 @@ def main(submitid, epoch, model_name):
     problem_processed, comments_processed, code_only = preprocess(
         problem, code)
     # calculate code density
-    comment_line_density, comment_char_density = get_density(
+    comment_line_density, comment_char_density = calculate_density(
         comments_processed, code_only)
     # check if comment has header
     header_score = calculate_header_score(comments_processed)
@@ -92,12 +92,12 @@ def main(submitid, epoch, model_name):
         vectors, problem_processed, comments_processed, 'wmd')
 
     # output results
-    print(f"comment density (char)                    : {comment_char_density}"
-          f"\ncomment density (line)                    : {comment_line_density}"
-          f"\nheader score                              : {header_score}"
-          f"\nsimilarity score                          : {sim_score}"
-          f"\nsnippets of problem text found in comment : {problem_text_in_comments_count}")
-    print("=================================================")
+    print(f"comment density (char)                    : {comment_char_density}\n"
+          f"comment density (line)                    : {comment_line_density}\n"
+          f"header score                              : {header_score}\n"
+          f"similarity score                          : {sim_score}\n"
+          f"snippets of problem text found in comment : {problem_text_in_comments_count}\n")
+    print("=================================================\n")
 
 
 picks = [77827, 76977, 75666, 78512, 79955]

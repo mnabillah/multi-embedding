@@ -1,3 +1,20 @@
+"""
+functions module
+
+Description
+===========
+This module holds the functions to be used by other modules.
+It includes functions to:
+    1) retrieve submission data
+    2) preprocess problem text and comments
+    3) load word embedding model
+    4) calculate similarity between code comments and problem text, and
+    5) calculate code comment density and code header score
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
 import logging
 import re
 import string
@@ -39,16 +56,10 @@ class LogWrapper:
             self.log.info("running %s" % ' '.join(sys.argv))
 
     def info(self, text):
-        if self.verbose:
-            self.log.info(text)
-        else:
-            print(text)
+        self.log.info(text) if self.verbose else print(text)
 
     def warning(self, text):
-        if self.verbose:
-            self.log.warning(text)
-        else:
-            print(text)
+        self.log.warning(text) if self.verbose else print(text)
 
     def error(self, text):
         if self.verbose:
@@ -77,7 +88,8 @@ def levenshtein_distance(s1: str, s2: str) -> int:
             if c1 == c2:
                 distances_.append(distances[i1])
             else:
-                distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
+                distances_.append(
+                    1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
         distances = distances_
     return distances[-1]
 
@@ -100,9 +112,8 @@ def calculate_header_score(comment_lines: list) -> float:
         for line in comment_lines:
             # loop through words in a line
             for comment_word in line:
-                # check if word from comment has < 3 levenshtein distance from the header word
-                #   use levenshtein distance to take account typos, e.g. "keberkahannya vs keberhakanna"
-                if levenshtein_distance(header_word, comment_word) < 3:
+                # check if word from header equals word from comment
+                if header_word == comment_word:
                     # if word from comment checks out, mark the 0 from the vector as 1
                     #   indicating that the word exists in the comments from the code
                     header_word_number[i] = 1
@@ -230,19 +241,23 @@ def preprocess_soal(problem):
 
 
 def strip_stopwords(problem, comments):
-    problem = [[word for word in line if word not in stopwords.words('indonesian')] for line in problem]
-    comments = [[word for word in line if word not in stopwords.words('indonesian')] for line in comments]
+    problem = [[word for word in line if word not in stopwords.words(
+        'indonesian')] for line in problem]
+    comments = [[word for word in line if word not in stopwords.words(
+        'indonesian')] for line in comments]
     return problem, comments
 
 
-def get_density(comments, code):
+def calculate_density(comments, code):
     # calculate code density
     comment_line_count = len(comments)
     code_line_count = len(code)
     comment_char_count = len(''.join([''.join(line) for line in comments]))
     code_char_count = len(''.join(code).strip(' '))
-    comment_line_density = comment_line_count / (comment_line_count + code_line_count)
-    comment_char_density = comment_char_count / (comment_char_count + code_char_count)
+    comment_line_density = comment_line_count / \
+        (comment_line_count + code_line_count)
+    comment_char_density = comment_char_count / \
+        (comment_char_count + code_char_count)
     return comment_line_density, comment_char_density
 
 
@@ -258,7 +273,7 @@ def get_sim_scores(data, vectors):
 
     """
     results = []
-    for row_id, problem, code, manual_score in data:
+    for row_id, problem, code, _ in data:
         # in case of decoding error
         try:
             # decode source code
@@ -267,18 +282,23 @@ def get_sim_scores(data, vectors):
             logging.error(f'error decoding blob at row={row_id}')
         else:
             # preprocessing includes normalization and tokenization
-            problem_processed, comments_processed, code_only = preprocess(problem, code)
+            problem_processed, comments_processed, code_only = preprocess(
+                problem, code)
             # calculate code density
-            comment_line_density, comment_char_density = get_density(comments_processed, code_only)
+            comment_line_density, comment_char_density = calculate_density(
+                comments_processed, code_only)
             # check if comment has header
             header_score = calculate_header_score(comments_processed)
             # count any parts of the problem text that exist inside comment
-            problem_text_in_comments_count = problem_text_in_comments(problem_processed, comments_processed)
+            problem_text_in_comments_count = problem_text_in_comments(
+                problem_processed, comments_processed)
             # remove stop words before similarity calculation
-            problem_processed, comments_processed = strip_stopwords(problem_processed, comments_processed)
+            problem_processed, comments_processed = strip_stopwords(
+                problem_processed, comments_processed)
             # calculate average similarity score
             print(f"calculating similarity for row {row_id}", end='\r')
-            sim_score = calculate_similarity(vectors, problem_processed, comments_processed, 'wmd')
+            sim_score = calculate_similarity(
+                vectors, problem_processed, comments_processed)
             results.append([row_id,
                             comment_char_density,
                             comment_line_density,
@@ -288,52 +308,48 @@ def get_sim_scores(data, vectors):
     return results
 
 
-def load_model(model_name: str, epoch: int):
+def load_model(model_name, epoch):
     from gensim.models import KeyedVectors
     from gensim.models.keyedvectors import FastTextKeyedVectors, Word2VecKeyedVectors
     from gensim.models.fasttext import load_facebook_vectors, load_facebook_model
     from gensim.models.wrappers import FastText
 
-    if model_name.lower() == 'word2vec':
-        return Word2VecKeyedVectors.load(f"trained_models/word2vec/idwiki.epoch-{epoch}.dim-300.kv")
-    elif model_name.lower() == 'glove':
-        return KeyedVectors.load_word2vec_format(
-            f"trained_models/glove/converted.idwiki.epoch-{epoch}.dim-300.model.txt")
-    elif model_name.lower() == 'fasttext':
-        model = FastText.load_fasttext_format(f"trained_models/fasttext/idwiki.epoch-{epoch}.dim-300.bin")
-        return model.wv
+    if epoch != '50+10':
+        # if epoch choice is epoch 10 or 50 (no continued training with CSPC problem texts)
+        if model_name.lower() == 'word2vec':
+            return Word2VecKeyedVectors.load(f"trained_models/word2vec/idwiki.epoch-{epoch}.dim-300.kv")
+        elif model_name.lower() == 'glove':
+            return KeyedVectors.load_word2vec_format(
+                f"trained_models/glove/converted.idwiki.epoch-{epoch}.dim-300.model.txt")
+        elif model_name.lower() == 'fasttext':
+            model = FastText.load_fasttext_format(
+                f"trained_models/fasttext/idwiki.epoch-{epoch}.dim-300.bin")
+            return model.wv
+    else:
+        # if epoch choice is 50+10, i.e. the 50 epoch word2vec model that's trained further with CSPC problem texts
+        return Word2VecKeyedVectors.load(f"trained_models/word2vec/idwiki-cspc.epoch-50.dim-300.kv")
 
     return None
 
 
-def calculate_similarity(vectors, problem_text, comments, sim):
+def calculate_similarity(vectors, problem_text, comments):
     """
     Calculate similarity score.
     Args:
         vectors: word vectors trained by Word2Vec, GloVe, or fastText
         problem_text: list of tokens from the problem text
         comments: list of tokens from code comments
-        sim: similarity metric (WMD or Jaccard)
 
     Returns:
         float: similarity score
     """
-    sim_score = None
     if vectors is not None:
-        if sim == 'wmd':
-            # WMD
-            # 1. comments_processed berisi list of tokens.
-            wmd_index = WmdSimilarity(problem_text, vectors)
-            wmd = wmd_index[comments]
+        wmd_index = WmdSimilarity(problem_text, vectors)
+        wmd = wmd_index[comments]
+        wmd = sum(wmd) / len(wmd)
+        import numpy as np
+        if type(wmd) is not float and type(wmd) is not np.float64:
             wmd = sum(wmd) / len(wmd)
-            import numpy as np
-            if type(wmd) is not float and type(wmd) is not np.float64:
-                wmd = sum(wmd) / len(wmd)
+        return wmd
 
-            # 2. comments processed diubah menjadi list of string.
-            # wmd_index = WmdSimilarity(problem_text, vectors)
-            # wmd_alt = wmd_index[[' '.join(line) for line in comments]]
-            # wmd_alt = sum(wmd_alt) / len(wmd_alt)
-
-            sim_score = wmd
-    return sim_score
+    return None
