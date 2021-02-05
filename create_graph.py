@@ -1,3 +1,15 @@
+"""
+create_graph
+
+Description
+===========
+This program is used to generate graphs from all CSV data using pandas.
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
+import matplotlib
 import os
 from ast import literal_eval
 from datetime import datetime
@@ -9,8 +21,8 @@ from evaluate import SCORE_WEIGHTS
 path_pearson_10 = 'results/eval-10-pearson.pandas.csv'
 path_pearson_50 = 'results/eval-50-pearson.pandas.csv'
 path_pearson_50_10 = 'results/eval-50-10-pearson.pandas.csv'
-path_spearman_10 = 'results/eval-10-spearman.pandas.csv'
-path_spearman_50 = 'results/eval-50-spearman.pandas.csv'
+path_spearman_10 = 'results/eval-10-spearman-nan.pandas.csv'
+path_spearman_50 = 'results/eval-50-spearman-nan.pandas.csv'
 path_spearman_50_10 = 'results/eval-50-10-spearman.pandas.csv'
 path_kendall_10 = 'results/eval-10-kendall-nan.pandas.csv'
 path_kendall_50 = 'results/eval-50-kendall-nan.pandas.csv'
@@ -154,6 +166,11 @@ df_performance_cpu_avg = pd.DataFrame({
     'Statistik 2': df_performance_sim2['cpu'].to_numpy(),
     'LCS': df_performance_lcs['cpu'].to_numpy(),
 }, index=df_performance_w2v.index)
+df_performance_cpu_avg_embedding_only = pd.DataFrame({
+    'Word2Vec': df_performance_w2v['cpu_avg'].to_numpy(),
+    'GloVe': df_performance_gv['cpu_avg'].to_numpy(),
+    'fastText': df_performance_ft['cpu_avg'].to_numpy()
+}, index=df_performance_w2v.index)
 # CPU max
 df_performance_cpu_max = pd.DataFrame({
     'Word2Vec': df_performance_w2v['cpu_max'].to_numpy(),
@@ -181,6 +198,11 @@ df_performance_memory_max = pd.DataFrame({
     'Statistik 2': df_performance_sim2['memory'].to_numpy(),
     'LCS': df_performance_lcs['memory'].to_numpy(),
 }, index=df_performance_w2v.index)
+df_performance_memory_max_embedding_only = pd.DataFrame({
+    'Word2Vec': df_performance_w2v['memory_max'].to_numpy(),
+    'GloVe': df_performance_gv['memory_max'].to_numpy(),
+    'fastText': df_performance_ft['memory_max'].to_numpy()
+}, index=df_performance_w2v.index)
 # duration
 df_performance_duration = pd.DataFrame({
     'Word2Vec': pd.to_timedelta(df_performance_w2v['duration']).dt.total_seconds(),
@@ -190,98 +212,121 @@ df_performance_duration = pd.DataFrame({
     'Statistik 2': df_performance_sim2['duration'].to_numpy(),
     'LCS': df_performance_lcs['duration'].to_numpy(),
 }, index=df_performance_w2v.index)
+df_performance_duration_embedding_only = pd.DataFrame({
+    'Word2Vec': pd.to_timedelta(df_performance_w2v['duration']).dt.total_seconds(),
+    'GloVe': pd.to_timedelta(df_performance_gv['duration']).dt.total_seconds(),
+    'fastText': pd.to_timedelta(df_performance_ft['duration']).dt.total_seconds()
+})
 df_performance_cpu_avg.to_csv('results/performance_cpu_avg.pandas.csv')
-df_performance_memory_max.to_csv('results/performance_memory_avg.pandas.csv')
+df_performance_cpu_avg_embedding_only.to_csv(
+    'results/performance_cpu_avg_embedding_only.pandas.csv')
+df_performance_memory_max.to_csv('results/performance_memory_max.pandas.csv')
+df_performance_memory_max_embedding_only.to_csv(
+    'results/performance_memory_max_embedding_only.pandas.csv')
 df_performance_duration.to_csv('results/performance_duration.pandas.csv')
+df_performance_duration_embedding_only.to_csv(
+    'results/performance_duration_embedding_only.pandas.csv')
 
 # save figures as png
 if not os.path.exists('figures'):
     os.mkdir('figures')
 
-df_pearson_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_10.png')
-df_pearson_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_50.png')
-df_pearson_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_w2v.png')
-df_pearson_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_gv.png')
-df_pearson_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_ft.png')
-df_spearman_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_10.png')
-df_spearman_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_50.png')
-df_spearman_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_w2v.png')
-df_spearman_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_gv.png')
-df_spearman_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_ft.png')
-df_spearman_statistik.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_statistik.png')
-df_kendall_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_10.png')
-df_kendall_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_50.png')
-df_kendall_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_w2v.png')
-df_kendall_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_gv.png')
-df_kendall_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_ft.png')
-df_mae_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_10.png')
-df_mae_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_50.png')
-df_mae_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_w2v.png')
-df_mae_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_gv.png')
-df_mae_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_ft.png')
-df_mae_statistik.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_statistik.png')
-df_performance_cpu_avg.plot.bar(rot=0).get_figure().savefig(
-    'figures/performance_cpu_avg.png')
-df_performance_memory_max.plot.bar(rot=0).get_figure().savefig(
-    'figures/performance_memory_max.png')
-df_performance_duration.plot.bar(rot=0).get_figure().savefig(
-    'figures/performance_duration.png')
+font = {'family': 'normal',
+        'weight': 'bold',
+        'size': 18}
+matplotlib.rc('font', **font)
 
-df_pearson_embedding_only_10 = df_pearson_10.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_pearson_embedding_only_50 = df_pearson_50.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_spearman_embedding_only_10 = df_spearman_10.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_spearman_embedding_only_50 = df_spearman_50.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_kendall_embedding_only_10 = df_kendall_10.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_kendall_embedding_only_50 = df_kendall_50.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_mae_embedding_only_10 = df_mae_10.drop(
-    columns=['Statistik_1', 'Statistik_2'])
-df_mae_embedding_only_50 = df_mae_50.drop(
-    columns=['Statistik_1', 'Statistik_2'])
+df_performance_cpu_avg_embedding_only.plot.bar(title='Penggunaan CPU rata-rata (dalam %)', figsize=(15, 10)).get_figure(
+).savefig('figures/performance_cpu_avg_embedding_only.png')
+df_performance_memory_max_embedding_only.plot.bar(title='Penggunaan memori maksimum (dalam MB)', figsize=(15, 10)).get_figure(
+).savefig('figures/performance_memory_max_embedding_only.png')
+df_performance_duration_embedding_only.plot.bar(title='Durasi perhitungan (dalam detik)', figsize=(15, 10)).get_figure(
+).savefig('figures/performance_duration_embedding_only.png')
 
-df_pearson_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_10_embedding_only.png')
-df_pearson_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_pearson_50_embedding_only.png')
-df_spearman_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_10_embedding_only.png')
-df_spearman_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_spearman_50_embedding_only.png')
-df_kendall_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_10_embedding_only.png')
-df_kendall_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/correlation_kendall_50_embedding_only.png')
-df_mae_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_10_embedding_only.png')
-df_mae_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
-    'figures/mae_50_embedding_only.png')
+# df_pearson_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_10.png')
+# df_pearson_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_50.png')
+# df_pearson_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_w2v.png')
+# df_pearson_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_gv.png')
+# df_pearson_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_ft.png')
+# df_spearman_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_10.png')
+# df_spearman_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_50.png')
+# df_spearman_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_w2v.png')
+# df_spearman_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_gv.png')
+# df_spearman_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_ft.png')
+# df_spearman_statistik.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_statistik.png')
+# df_kendall_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_10.png')
+# df_kendall_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_50.png')
+# df_kendall_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_w2v.png')
+# df_kendall_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_gv.png')
+# df_kendall_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_ft.png')
+# df_mae_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_10.png')
+# df_mae_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_50.png')
+# df_mae_w2v.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_w2v.png')
+# df_mae_gv.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_gv.png')
+# df_mae_ft.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_ft.png')
+# df_mae_statistik.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_statistik.png')
+# df_performance_cpu_avg.plot.bar(rot=0).get_figure().savefig(
+#     'figures/performance_cpu_avg.png')
+# df_performance_memory_max.plot.bar(rot=0).get_figure().savefig(
+#     'figures/performance_memory_max.png')
+# df_performance_duration.plot.bar(rot=0).get_figure().savefig(
+#     'figures/performance_duration.png')
+
+# df_pearson_embedding_only_10 = df_pearson_10.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_pearson_embedding_only_50 = df_pearson_50.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_spearman_embedding_only_10 = df_spearman_10.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_spearman_embedding_only_50 = df_spearman_50.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_kendall_embedding_only_10 = df_kendall_10.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_kendall_embedding_only_50 = df_kendall_50.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_mae_embedding_only_10 = df_mae_10.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+# df_mae_embedding_only_50 = df_mae_50.drop(
+#     columns=['Statistik_1', 'Statistik_2'])
+
+# df_pearson_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_10_embedding_only.png')
+# df_pearson_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_pearson_50_embedding_only.png')
+# df_spearman_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_10_embedding_only.png')
+# df_spearman_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_spearman_50_embedding_only.png')
+# df_kendall_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_10_embedding_only.png')
+# df_kendall_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/correlation_kendall_50_embedding_only.png')
+# df_mae_embedding_only_10.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_10_embedding_only.png')
+# df_mae_embedding_only_50.plot.bar(figsize=(15, 10)).get_figure().savefig(
+#     'figures/mae_50_embedding_only.png')
 exit(0)
 
 # CPU histogram

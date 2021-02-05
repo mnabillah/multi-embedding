@@ -1,6 +1,17 @@
 import sys
 
 import numpy as np
+"""
+evaluate
+
+Description
+===========
+This program is used to calculate Spearman correlation and MAE of the scores.
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
 import pandas
 import pandas as pd
 from scipy.stats import pearsonr, spearmanr, kendalltau
@@ -9,7 +20,6 @@ from sklearn.metrics import mean_absolute_error
 from db import connection
 from functions import SIMILARITY_COLUMN_NAMES
 
-# TODO: pastikan bobot nilai
 HEADER_SCORE_WEIGHT = 0.0
 DENSITY_SCORE_WEIGHT = 0.0
 SIM_SCORE_WEIGHT = 1.0 - HEADER_SCORE_WEIGHT - DENSITY_SCORE_WEIGHT
@@ -106,11 +116,16 @@ if __name__ == '__main__':
         statistik_2_final_scores = []
 
         for i in range(len(header_scores)):
-            word2vec_final_scores.append(get_final_score(word2vec_sims[i], header_scores[i], density_scores[i]))
-            glove_final_scores.append(get_final_score(glove_sims[i], header_scores[i], density_scores[i]))
-            fasttext_final_scores.append(get_final_score(fasttext_sims[i], header_scores[i], density_scores[i]))
-            statistik_1_final_scores.append(get_final_score(statistik_1_sims[i], header_scores[i], density_scores[i]))
-            statistik_2_final_scores.append(get_final_score(statistik_2_sims[i], header_scores[i], density_scores[i]))
+            word2vec_final_scores.append(get_final_score(
+                word2vec_sims[i], header_scores[i], density_scores[i]))
+            glove_final_scores.append(get_final_score(
+                glove_sims[i], header_scores[i], density_scores[i]))
+            fasttext_final_scores.append(get_final_score(
+                fasttext_sims[i], header_scores[i], density_scores[i]))
+            statistik_1_final_scores.append(get_final_score(
+                statistik_1_sims[i], header_scores[i], density_scores[i]))
+            statistik_2_final_scores.append(get_final_score(
+                statistik_2_sims[i], header_scores[i], density_scores[i]))
 
         # hitung nilai pearson correlation antara tiap nilai similarity dengan nilai manual
 
@@ -122,18 +137,28 @@ if __name__ == '__main__':
         # statistik_2_pearson, _ = pearsonr(statistik_2_final_scores, manual_scores)
 
         # Spearman Rho Correlation
-        word2vec_spearman, _ = spearmanr(word2vec_final_scores, manual_scores, nan_policy='propagate')
-        glove_spearman, _ = spearmanr(glove_final_scores, manual_scores, nan_policy='propagate')
-        fasttext_spearman, _ = spearmanr(fasttext_final_scores, manual_scores, nan_policy='propagate')
-        statistik_1_spearman, _ = spearmanr(statistik_1_final_scores, manual_scores, nan_policy='propagate')
-        statistik_2_spearman, _ = spearmanr(statistik_2_final_scores, manual_scores, nan_policy='propagate')
+        word2vec_spearman, _ = spearmanr(
+            word2vec_final_scores, manual_scores, nan_policy='propagate')
+        glove_spearman, _ = spearmanr(
+            glove_final_scores, manual_scores, nan_policy='propagate')
+        fasttext_spearman, _ = spearmanr(
+            fasttext_final_scores, manual_scores, nan_policy='propagate')
+        statistik_1_spearman, _ = spearmanr(
+            statistik_1_final_scores, manual_scores, nan_policy='propagate')
+        statistik_2_spearman, _ = spearmanr(
+            statistik_2_final_scores, manual_scores, nan_policy='propagate')
 
         # Kendall Tau Correlation
-        word2vec_kendall, _ = kendalltau(word2vec_final_scores, manual_scores, nan_policy='propagate')
-        glove_kendall, _ = kendalltau(glove_final_scores, manual_scores, nan_policy='propagate')
-        fasttext_kendall, _ = kendalltau(fasttext_final_scores, manual_scores, nan_policy='propagate')
-        statistik_1_kendall, _ = kendalltau(statistik_1_final_scores, manual_scores, nan_policy='propagate')
-        statistik_2_kendall, _ = kendalltau(statistik_2_final_scores, manual_scores, nan_policy='propagate')
+        word2vec_kendall, _ = kendalltau(
+            word2vec_final_scores, manual_scores, nan_policy='propagate')
+        glove_kendall, _ = kendalltau(
+            glove_final_scores, manual_scores, nan_policy='propagate')
+        fasttext_kendall, _ = kendalltau(
+            fasttext_final_scores, manual_scores, nan_policy='propagate')
+        statistik_1_kendall, _ = kendalltau(
+            statistik_1_final_scores, manual_scores, nan_policy='propagate')
+        statistik_2_kendall, _ = kendalltau(
+            statistik_2_final_scores, manual_scores, nan_policy='propagate')
 
         # MAE
         # average of every absolute delta between real score and predicted score
@@ -146,7 +171,8 @@ if __name__ == '__main__':
         # pearson_row = [word2vec_pearson, glove_pearson, fasttext_pearson, statistik_1_pearson, statistik_2_pearson]
         spearman_row = [word2vec_spearman, glove_spearman, fasttext_spearman, statistik_1_spearman,
                         statistik_2_spearman]
-        kendall_row = [word2vec_kendall, glove_kendall, fasttext_kendall, statistik_1_kendall, statistik_2_kendall]
+        kendall_row = [word2vec_kendall, glove_kendall,
+                       fasttext_kendall, statistik_1_kendall, statistik_2_kendall]
         # mae_row = [word2vec_mae, glove_mae, fasttext_mae, statistik_1_mae, statistik_2_mae]
 
         # pearson_scores.append(pearson_row)
@@ -154,10 +180,12 @@ if __name__ == '__main__':
         kendall_scores.append(kendall_row)
         # mae_values.append(mae_row)
 
-    index = pandas.MultiIndex.from_tuples(SCORE_WEIGHTS, names=['header', 'density'])
+    index = pandas.MultiIndex.from_tuples(
+        SCORE_WEIGHTS, names=['header', 'density'])
     columns = ['Word2Vec', 'GloVe', 'fastText', 'Statistik_1', 'Statistik_2']
     # df_pearson = pandas.DataFrame(pearson_scores, index=index, columns=columns)
-    df_spearman = pandas.DataFrame(spearman_scores, index=index, columns=columns)
+    df_spearman = pandas.DataFrame(
+        spearman_scores, index=index, columns=columns)
     df_kendall = pandas.DataFrame(kendall_scores, index=index, columns=columns)
     # df_mae = pandas.DataFrame(mae_values, index=index, columns=columns)
     print('Spearman')

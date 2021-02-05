@@ -1,3 +1,4 @@
+import os
 import multiprocessing
 import sys
 from datetime import datetime
@@ -8,12 +9,14 @@ from functions import LogWrapper
 from constants import *
 
 if __name__ == "__main__":
-    print("========================================================================================")
-    print("========================================================================================")
     log = LogWrapper(True, sys.argv[0])
 
     INPUT_PATH = "corpus/idwiki/preprocessed-nltk.txt"
-    OUTPUT_PATH = "trained_models/fasttext/idwiki.epoch-{}.dim-{}.bin".format(EPOCH, EMBEDDING_SIZE)
+    OUTPUT_PATH = "trained_models/fasttext/idwiki.epoch-{}.dim-{}.bin".format(
+        EPOCH, EMBEDDING_SIZE)
+
+    if not os.path.exists('./trained_models'):
+        os.mkdir('./trained_models')
 
     start = datetime.now()
     # fastText

@@ -1,3 +1,4 @@
+import os
 import multiprocessing
 import sys
 from datetime import datetime
@@ -10,30 +11,22 @@ from functions import LogWrapper
 from constants import *
 
 
-class Callback(CallbackAny2Vec):
-    """Callback to print loss after each epoch."""
-
-    def __init__(self):
-        self.epoch = 0
-
-    def on_epoch_end(self, model):
-        loss = model.get_latest_training_loss()
-        # print('Cumulative loss after epoch {}: {}'.format(self.epoch, loss))
-        self.epoch += 1
-
-
 if __name__ == "__main__":
     log = LogWrapper(True, sys.argv[0])
 
     INPUT_PATH = "corpus/idwiki/preprocessed-nltk.txt"
-    OUTPUT_PATH = "trained_models/word2vec/idwiki.epoch-{}.dim-{}.bin".format(EPOCH, EMBEDDING_SIZE)
+    OUTPUT_PATH = "trained_models/idwiki.epoch-{}.dim-{}.bin".format(
+        EPOCH, EMBEDDING_SIZE)
+
+    if not os.path.exists('./trained_models'):
+        os.mkdir('./trained_models')
 
     start = datetime.now()
     # Word2vec
     print("Training...")
     model_word2vec = Word2Vec(LineSentence(INPUT_PATH), min_count=MIN_COUNT, sg=1, hs=1, negative=NS_SAMPLE,
-                              size=EMBEDDING_SIZE, window=WINDOW_SIZE, seed=SEED, alpha=LEARNING_RATE, iter=EPOCH,
-                              workers=multiprocessing.cpu_count(), callbacks=[Callback()], compute_loss=True)
+                              size=EMBEDDING_SIZE, window=WINDOW_SIZE, seed=SEED, alpha=LEARNING_RATE, iter=1,
+                              workers=multiprocessing.cpu_count())
     finish = datetime.now()
     train_duration = finish - start
     print(f"Train finished in {train_duration}")

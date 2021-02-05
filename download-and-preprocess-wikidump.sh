@@ -2,7 +2,7 @@
 set -e
 
 # set path to download indonesian wikidump file
-WIKI_DUMP_DIR=./corpus/idwiki-counting
+WIKI_DUMP_DIR=./corpus/idwiki
 WIKI_DUMP_NAME=idwiki-latest-pages-articles.xml.bz2
 WIKI_DUMP_DOWNLOAD_URL=https://dumps.wikimedia.org/idwiki/latest/$WIKI_DUMP_NAME
 
@@ -43,3 +43,6 @@ echo "Sukses meng-extract dan membersihkan $WIKI_DUMP_FILE_IN ke $WIKI_DUMP_FILE
 
 # remove wikiextractor repo
 rmdir wikiextractor -r -fo
+
+# run python preprocessing
+python preprocessing.py preprocessed.txt

@@ -1,3 +1,14 @@
+"""
+calculate_performance
+
+Description
+===========
+This program is used to measure performance of score calculation on five set submission data using all three models.
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
 import os
 import threading
 from datetime import datetime

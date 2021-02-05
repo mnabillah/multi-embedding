@@ -1,3 +1,14 @@
+"""
+glove_to_word2vec
+
+Description
+===========
+This program converts word embedding from GloVe to Word2vec format as supported by Gensim
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
 import sys
 
 from gensim.scripts.glove2word2vec import glove2word2vec

@@ -31,7 +31,9 @@ from nltk.corpus import stopwords
 header = "Saya mengerjakan evaluasi dalam mata kuliah untuk keberkahanNya" \
          " maka saya tidak melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin."
 # lowercase and stripped of punctuations
-header_parsed = [''.join([letter for letter in word.lower() if letter not in string.punctuation])
+header_parsed = [''.join([letter for letter
+                          in word.lower()
+                          if letter not in string.punctuation])
                  for word in header.split(' ')]
 SIMILARITY_COLUMN_NAMES = ['row_id',
                            'comment_char_density',
@@ -47,7 +49,8 @@ class LogWrapper:
         if self.verbose:
             self.log = logging.getLogger(script_name)
             logging.basicConfig(
-                filename=f"logs/{script_name.replace('.py', '')}-{datetime.now().strftime('%Y%d%m%H%M%S')}.log",
+                filename=f"logs/{script_name.replace('.py', '')}"
+                "-{datetime.now().strftime('%Y%d%m%H%M%S')}.log",
                 filemode='w',
                 format="%(asctime)s:\t[%(levelname)s]\t%(message)s",
                 datefmt='%d-%b-%y %H:%M:%S')

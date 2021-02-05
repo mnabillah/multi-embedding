@@ -1,3 +1,19 @@
+"""
+calculate_all
+
+Description
+===========
+This program is used for experiment phase to calculate header, density, and similarity score for all data.
+It makes use of the functions from the functions module.
+The output of this program is a csv file in the results folder.
+
+Run "python calculate_all.py -h" for more information about the arguments.
+
+Made by:
+    Muhammad Nabillah Fihira Rischa
+    abel.rischa@gmail.com
+"""
+import argparse
 import csv
 import os
 
@@ -44,13 +60,17 @@ def main(model_name: str, epoch: int):
 
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 3, "argument invalid"
+    # argument parser
+    parser = argparse.ArgumentParser(
+        description="Calculate score of submission using previously-trained word embeddings.")
+    parser.add_argument('model', metavar='model name', type=str, choices=['word2vec', 'glove', 'fasttext'],
+                        help="specifies word embedding model (word2vec, glove, or fasttext)")
+    parser.add_argument('epoch', metavar='epoch version', type=str, choices=['10', '50', '50+10'],
+                        help="specifies which epoch version of the model to be used (10, 50, or 50+10 (only available for word2vec))")
+    args = parser.parse_args()
 
-    name = sys.argv[1]
-    assert name in ['word2vec', 'glove', 'fasttext'], "model name invalid"
-
-    epoch_ver = int(sys.argv[2])
-    assert epoch_ver in [10, 50], "invalid epoch version"
+    name = args.model.lower()
+    epoch_ver = args.epoch
 
     log = LogWrapper(True, sys.argv[0])
     main(name, epoch_ver)

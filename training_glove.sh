@@ -36,7 +36,7 @@ if [[ $? -eq 0 ]]; then
     if [[ $? -eq 0 ]]; then
       $BUILD_DIR/glove -save-file $SAVE_FILE -threads $NUM_THREADS -input-file $COOCCURRENCE_SHUF_FILE -x-max $X_MAX -iter $MAX_ITER -vector-size $VECTOR_SIZE -binary $BINARY -vocab-file $VOCAB_FILE -verbose $VERBOSE
       if [[ $? -eq 0 ]]; then
-        python glove-to-word2vec.py $SAVE_FILE
+        python glove_to_word2vec.py $SAVE_FILE
       fi
     fi
   fi
