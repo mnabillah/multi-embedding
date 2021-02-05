@@ -9,6 +9,7 @@ Made by:
     Muhammad Nabillah Fihira Rischa
     abel.rischa@gmail.com
 """
+from constants import CORPUS_NAME, CORPUS_PATH
 import logging
 import sys
 from datetime import datetime
@@ -63,10 +64,6 @@ def normalize(text):
 
 
 if __name__ == "__main__":
-    assert sys.argv[1], "Jalankan program dengan perintah 'python preprocessing.py [preprocessed.file.name.txt]'. " \
-                        "Output akan diletakkan di dalam folder corpus/idwiki"
-    name = sys.argv[1]
-
     logger = logging.getLogger()
     logging.basicConfig(
         filename="logs\\preprocessing-{}.log".format(
@@ -81,11 +78,8 @@ if __name__ == "__main__":
     logger.info(
         "preprocessing menggunakan nltk.tokenize.RegexpTokenizer dan nltk.corpus.stopwords")
 
-    corpus_directory = "corpus\\idwiki"
-
-    input_path = "{}\\idwiki-latest-pages-articles.txt".format(
-        corpus_directory)
-    output_path = "{}\\{}".format(corpus_directory, name)
+    input_path = f"{CORPUS_PATH}\\idwiki-latest-pages-articles.txt"
+    output_path = f"{CORPUS_PATH}\\{CORPUS_NAME}"
     logger.info(f"mengolah korpus wikipedia dari {input_path}")
     logger.info(f"hasil preprocessing akan disimpan di {output_path}")
     try:
@@ -112,39 +106,3 @@ if __name__ == "__main__":
         logger.error(
             'Berkas korpus tidak ditemukan. " \
             "Jalankan "bash download-and-clean-wikidump.sh" untuk mengunduh dan parsing Wikipedia Dump menjadi korpus.')
-        # Using Gensim's WikiCorpus
-
-        # input_file = "{}\\idwiki-latest-pages-articles.xml.bz2".format(corpus_directory)
-        # logger.info("preparing to preprocess cased corpus")
-        # output_file_cased = "{}\\preprocessed-cased.txt".format(corpus_directory)
-        # with open(output_file_cased, 'w', encoding='utf-8') as output:
-        #     logger.info("preprocessing...")
-        #     wiki = WikiCorpus(input_file, lemmatize=False, token_min_len=3, dictionary={}, lower=False)
-        #
-        #     i = 0
-        #     logger.info("writing preprocessed cased corpus into output file")
-        #     for text in wiki.get_texts():
-        #         output.write(' '.join(text) + '\n')
-        #         i = i + 1
-        #         if i % 10000 == 0:
-        #             logger.info("saved " + str(i) + " articles")
-        #
-        # logger.info("finished saving " + str(i) + " articles")
-        # del wiki
-        #
-        # logger.info("preparing to preprocess uncased corpus")
-        # output_file_uncased = "{}\\preprocessed-uncased.txt".format(corpus_directory)
-        # with open(output_file_uncased, 'w', encoding='utf-8') as output:
-        #     logger.info("preprocessing...")
-        #     wiki = WikiCorpus(input_file, lemmatize=False, token_min_len=3, dictionary={}, lower=True)
-        #
-        #     i = 0
-        #     logger.info("writing preprocessed uncased corpus into output file")
-        #     for text in wiki.get_texts():
-        #         output.write(' '.join(text) + '\n')
-        #         i = i + 1
-        #         if i % 10000 == 0:
-        #             logger.info("saved " + str(i) + " articles")
-        #
-        # logger.info("finished saving " + str(i) + " articles")
-        # del wiki

@@ -2,7 +2,7 @@
 
 # General parameters
 MODELS_DIR=trained_models
-CORPUS=corpus/idwiki/preprocessed-nltk.txt
+CORPUS=corpus/idwiki/preprocessed.txt
 VECTOR_SIZE=300
 MAX_ITER=50
 WINDOW_SIZE=5

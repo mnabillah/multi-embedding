@@ -14,12 +14,13 @@ from constants import *
 if __name__ == "__main__":
     log = LogWrapper(True, sys.argv[0])
 
-    INPUT_PATH = "corpus/idwiki/preprocessed-nltk.txt"
-    OUTPUT_PATH = "trained_models/idwiki.epoch-{}.dim-{}.bin".format(
-        EPOCH, EMBEDDING_SIZE)
+    INPUT_PATH = f"{CORPUS_PATH}/{CORPUS_NAME}"
+    OUTPUT_PATH = f"{WORD2VEC_PATH}/idwiki.epoch-{EPOCH}.dim-{EMBEDDING_SIZE}.bin"
 
-    if not os.path.exists('./trained_models'):
-        os.mkdir('./trained_models')
+    if not os.path.exists(MODEL_PATH):
+        os.mkdir(MODEL_PATH)
+    if not os.path.exists(WORD2VEC_PATH):
+        os.mkdir(WORD2VEC_PATH)
 
     start = datetime.now()
     # Word2vec
